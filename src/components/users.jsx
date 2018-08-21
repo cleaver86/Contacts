@@ -1,10 +1,18 @@
 import React from "react";
 import HOCloader from "../HOC/loader";
+import { observer } from "mobx-react";
 
 @HOCloader("users")
-export default class Users extends React.Component {
+class Users extends React.Component {
   static defaultProps = {
     users: []
+  };
+  removeUser(id) {
+    this.props.userStore.removeUser(id);
+  }
+  handleAddUserClick = () => {
+    this.props.userStore.addUser();
+    this.props.userStore.save();
   };
   renderUser(user) {
     return (
@@ -18,8 +26,8 @@ export default class Users extends React.Component {
           border: "1px solid gray"
         }}
       >
-        <div style={{ width: "25%", float: "left" }}>
-          <img src={user.thumbnail} />
+        <div style={{ width: "50px", height: "50px", float: "left" }}>
+          <img width="50" height="50" src={user.avatar} />
         </div>
         <div style={{ width: "75%", float: "right" }}>
           <ul style={{ margin: 0, padding: 0, listStyleType: "none" }}>
@@ -27,16 +35,26 @@ export default class Users extends React.Component {
             <li>{user.email}</li>
           </ul>
         </div>
+        <a
+          onClick={() => {
+            this.removeUser(user.id);
+          }}
+        >
+          Remove
+        </a>
       </li>
     );
   }
   render() {
     return (
       <div style={{ width: 500, margin: "0 auto" }}>
+        <a onClick={this.handleAddUserClick}>Add User</a>
         <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
-          {this.props.users.map(user => this.renderUser(user))}
+          {this.props.userStore.users.map(user => this.renderUser(user))}
         </ul>
       </div>
     );
   }
 }
+
+export default observer(Users);
