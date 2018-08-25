@@ -1,15 +1,16 @@
 {
-  "name": "user-list",
+  "name": "recipe-list",
   "version": "0.0.0",
   "description": "",
   "keywords": [],
   "main": "index.js",
   "dependencies": {
+    "@material-ui/core": "1.5.1",
+    "@material-ui/icons": "2.0.3",
     "mobx": "5.0.4",
     "mobx-react": "5.2.5",
-    "namor": "1.0.1",
-    "react": "15.5.3",
-    "react-dom": "15.5.3"
+    "react": "16.4.2",
+    "react-dom": "16.4.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.0"

@@ -4,7 +4,7 @@ import React from "react";
 const loader = propName => WrappedComponent => {
   return class loader extends React.Component {
     render() {
-      return this.props["userStore"]["users"].length ? (
+      return this.props["recipeStore"]["recipes"].length ? (
         <WrappedComponent {...this.props} />
       ) : (
         <div className="loader" />

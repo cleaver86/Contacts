@@ -1,33 +1,44 @@
 import React from "react";
 import { render } from "react-dom";
-import UsersList from "./components/users";
+import RecipeList from "./components/recipes";
 import { action, decorate, observable, computed } from "mobx";
-import { observer } from "mobx-react";
 import "./index.css";
 
-class UserStore {
-  @observable users = [];
+class RecipeStore {
+  @observable recipes = [];
   constructor() {
     this.fetch();
   }
   fetch() {
-    fetch("https://sheetdb.io/api/v1/5b7c675430b82")
+    fetch("https://gw.hellofresh.com/api/recipes/search?country=ca", {
+      headers: {
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNjgwNzdjLTI1M2UtNGE2MS05YTUxLTFkMTA0YWFmZjNmNiIsInVzZXJuYW1lIjoiY29yeS5jbGVhdmVyQGdtYWlsLmNvbSIsImVtYWlsIjoiY29yeS5jbGVhdmVyQGdtYWlsLmNvbSIsImNvdW50cnkiOiJjYSIsImJsb2NrZWQiOmZhbHNlLCJtZXRhZGF0YSI6eyJuYW1lIjoiQ29yeSBDbGVhdmVyIn0sInJvbGVzIjpbXSwiZXhwIjoxNTM2ODkzNzQ0LCJqdGkiOiI0NmMwY2ZhYy1jNDQzLTQ1MDYtODVkMy05MzlhMzBkNGMxOTAiLCJpYXQiOjE1MzQyNjQwMDEsImlzcyI6IjRlNmQ5OGU1LTk3MmMtNGMzZC1hZGQ0LTZhMzI0MzEyM2ZjYSIsInN1YiI6IjYzNjgwNzdjLTI1M2UtNGE2MS05YTUxLTFkMTA0YWFmZjNmNiJ9.Eu7-eEAfnPggrGJOjjSX-hBhAopAd92PTYiG-5YOPAk"
+      }
+    })
       .then(response => response.json())
-      .then(parsedResponse =>
-        parsedResponse.map(user => ({
-          name: `${user.first_name} ${user.last_name}`,
-          email: user.email,
-          avatar: user.avatar
-        }))
-      )
-      .then(users => (this.users = users));
+      .then(parsedResponse => parsedResponse.items)
+      .then(recipes => (this.recipes = recipes))
+      .then(() => {
+        console.log(this.recipes);
+      });
+    // fetch("https://sheetdb.io/api/v1/5b7c675430b82")
+    //   .then(response => response.json())
+    //   .then(parsedResponse =>
+    //     parsedResponse.map(user => ({
+    //       name: `${user.first_name} ${user.last_name}`,
+    //       email: user.email,
+    //       avatar: user.avatar
+    //     }))
+    //   )
+    //   .then(users => (this.users = users));
   }
   save() {
     const body = {
-      data: JSON.stringify(this.users)
+      data: JSON.stringify(this.recipes)
     };
     const url = new URL("https://sheetdb.io/api/v1/5b7c675430b82");
-    url.searchParams.append("data", JSON.stringify(this.users));
+    url.searchParams.append("data", JSON.stringify(this.recipes));
 
     fetch(url, {
       headers: {
@@ -44,8 +55,8 @@ class UserStore {
   //   return values(this.todos).filter(todo => !todo.finished).length
   // }
   @action
-  addUser() {
-    this.users.push({
+  addRecipe() {
+    this.recipes.push({
       id: Math.random()
         .toString(36)
         .substring(7),
@@ -57,38 +68,24 @@ class UserStore {
   }
 
   @action
-  removeUser(id) {
-    const users = this.users.filter(user => {
-      return user.id !== id;
+  removeRecipe(id) {
+    const recipes = this.recipes.filter(recipe => {
+      return recipe.id !== id;
     });
 
-    this.users = users;
+    this.recipes = recipes;
   }
 }
 
-// decorate(TodoList, {
-//   todos: observable,
-//   unfinishedTodoCount: computed,
-//   addTodo: action.bound
-// })
-
-// decorate(Store, {
-//   users: observable
-// });
-
-const userStore = new UserStore();
+const recipeStore = new RecipeStore();
 
 class App extends React.Component {
   constructor() {
     super();
   }
   render() {
-    return (
-      <div>
-        <h1>Lists</h1>
-        <UsersList userStore={userStore} />
-      </div>
-    );
+    console.log(recipeStore.recipes);
+    return <RecipeList recipeStore={recipeStore} />;
   }
 }
 
